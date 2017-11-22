@@ -1,0 +1,56 @@
+{
+  "name": "node-securepay",
+  "version": "0.1.0",
+  "description": "SecurePay API wrapper for node.js",
+  "author": "Max",
+  "license": "UNLICENSED",
+  "main": "lib/index.js",
+  "files": [
+    "lib/"
+  ],
+  "scripts": {
+    "precommit": "lint-staged",
+    "lint": "xo",
+    "test": "npm run lint && ava"
+  },
+  "xo": {
+    "extends": "prettier"
+  },
+  "lint-staged": {
+    "*.js": [
+      "npm run lint",
+      "prettier --single-quote --write",
+      "git add"
+    ]
+  },
+  "ava": {
+    "require": [
+      "babel-register"
+    ]
+  },
+  "babel": {
+    "presets": [
+      "@ava/stage-4"
+    ],
+    "plugins": [
+      "transform-object-rest-spread"
+    ]
+  },
+  "dependencies": {
+    "is-plain-object": "^2.0.4",
+    "node-fetch": "^1.7.3",
+    "schema-object": "^4.0.11",
+    "xml-js": "^1.5.2"
+  },
+  "devDependencies": {
+    "ava": "^0.23.0",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-register": "^6.26.0",
+    "eslint-config-prettier": "^2.8.0",
+    "husky": "^0.14.3",
+    "lint-staged": "^5.0.0",
+    "pify": "^3.0.0",
+    "prettier": "1.8.2",
+    "xo": "^0.18.2"
+  }
+}

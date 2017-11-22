@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SecurePayMessage>
+    <MessageInfo>
+        <messageID>123456789</messageID>
+        <messageTimestamp>1511152130236</messageTimestamp>
+        <timeoutValue>60</timeoutValue>
+        <apiVersion>spxml-4.2</apiVersion>
+    </MessageInfo>
+    <MerchantInfo>
+        <merchantID>ABC0001</merchantID>
+        <password>abc123</password>
+    </MerchantInfo>
+    <RequestType>Periodic</RequestType>
+    <Periodic>
+        <PeriodicList count="1">
+            <PeriodicItem ID="1">
+                <actionType>add</actionType>
+                <periodicType>4</periodicType>
+                <clientID>testTokenId171120</clientID>
+                <currency>AUD</currency>
+                <amount>100</amount>
+                <CreditCardInfo>
+                    <cardNumber>5555555555554444</cardNumber>
+                    <expiryDate>12/23</expiryDate>
+                    <cardHolderName>Eddie Murphy</cardHolderName>
+                </CreditCardInfo>
+            </PeriodicItem>
+        </PeriodicList>
+    </Periodic>
+</SecurePayMessage>

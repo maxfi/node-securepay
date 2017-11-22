@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SecurePayMessage>
+    <MessageInfo>
+        <messageID>8af793f9af34bea0ecd7eff71b37ef</messageID>
+        <messageTimestamp>20040710144410220000+600</messageTimestamp>
+        <apiVersion>spxml-3.0</apiVersion>
+    </MessageInfo>
+    <RequestType>Periodic</RequestType>
+    <MerchantInfo>
+        <merchantID>ABC0001</merchantID>
+    </MerchantInfo>
+    <Status>
+        <statusCode>0</statusCode>
+        <statusDescription>Normal</statusDescription>
+    </Status>
+    <Periodic>
+        <PeriodicList count="1">
+            <PeriodicItem ID="1">
+                <actionType>add</actionType>
+                <clientID>test3</clientID>
+                <responseCode>00</responseCode>
+                <responseText>Successful</responseText>
+                <successful>yes</successful>
+                <CreditCardInfo>
+                    <pan>444433...111</pan>
+                    <expiryDate>09/25</expiryDate>
+                    <recurringFlag>no</recurringFlag>
+                </CreditCardInfo>
+                <amount>1100</amount>
+                <periodicType>4</periodicType>
+            </PeriodicItem>
+        </PeriodicList>
+    </Periodic>
+</SecurePayMessage>
