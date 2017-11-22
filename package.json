@@ -1,6 +1,6 @@
 {
   "name": "node-securepay",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "SecurePay API wrapper for node.js",
   "author": "Max",
   "license": "UNLICENSED",
