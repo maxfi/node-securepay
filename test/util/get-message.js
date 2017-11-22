@@ -1,5 +1,5 @@
 import test from 'ava';
-import getMessage from '../../lib/util/get-message';
+import getMessage from '../../src/util/get-message';
 
 test('getMessage', t => {
   t.deepEqual(

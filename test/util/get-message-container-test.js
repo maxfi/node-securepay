@@ -1,7 +1,7 @@
 import test from 'ava';
 import xmljs from 'xml-js';
 import readFile from '../helpers/read-file';
-import getMessageContainer from '../../lib/util/get-message-container';
+import getMessageContainer from '../../src/util/get-message-container';
 
 const payload = {
   messageId: '123456789',

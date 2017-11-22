@@ -1,7 +1,7 @@
 import test from 'ava';
 import xmljs from 'xml-js';
 import readFile from '../helpers/read-file';
-import getResponse from '../../lib/util/get-response';
+import getResponse from '../../src/util/get-response';
 
 const fromXml = x => xmljs.xml2js(x, { compact: true });
 

@@ -1,5 +1,5 @@
 import test from 'ava';
-import SecurePay from '../../lib';
+import SecurePay from '../../src';
 
 test('SecurePay.addToken - success', async t => {
   const sp = new SecurePay(

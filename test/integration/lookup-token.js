@@ -1,5 +1,5 @@
 import test from 'ava';
-import SecurePay from '../../lib';
+import SecurePay from '../../src';
 
 test('SecurePay.lookupToken - token does not exist', async t => {
   const sp = new SecurePay(

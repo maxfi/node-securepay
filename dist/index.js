@@ -1,26 +1,260 @@
-import xmljs from 'xml-js';
-import fetch from 'node-fetch';
-import getMessageContainer from './util/get-message-container';
-import getResponse from './util/get-response';
-import Payor from './schemas/payor';
-import Token from './schemas/token';
-import Payment from './schemas/payment';
+'use strict';
 
-const toXml = (x) => xmljs.js2xml(x, {spaces: 4, compact: true});
-const fromXml = (x) => xmljs.xml2js(x, {compact: true});
+function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
-const request = async (url, payload) => {
-  const xml = toXml(payload);
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: {'Content-Type': 'text/xml'},
-    body: xml
-  }).then(x => x.text());
-  return getResponse(fromXml(response));
+var xmlJs = require('xml-js');
+var fetch = _interopDefault(require('node-fetch'));
+var isPlainObject = _interopDefault(require('is-plain-object'));
+var SchemaObject = _interopDefault(require('schema-object'));
+
+var asyncToGenerator = function (fn) {
+  return function () {
+    var gen = fn.apply(this, arguments);
+    return new Promise(function (resolve, reject) {
+      function step(key, arg) {
+        try {
+          var info = gen[key](arg);
+          var value = info.value;
+        } catch (error) {
+          reject(error);
+          return;
+        }
+
+        if (info.done) {
+          resolve(value);
+        } else {
+          return Promise.resolve(value).then(function (value) {
+            step("next", value);
+          }, function (err) {
+            step("throw", err);
+          });
+        }
+      }
+
+      return step("next");
+    });
+  };
 };
 
-const clean = (el) => {
-  return (response) => {
+
+
+
+
+
+
+
+
+
+
+var _extends = Object.assign || function (target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i];
+
+    for (var key in source) {
+      if (Object.prototype.hasOwnProperty.call(source, key)) {
+        target[key] = source[key];
+      }
+    }
+  }
+
+  return target;
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+var slicedToArray = function () {
+  function sliceIterator(arr, i) {
+    var _arr = [];
+    var _n = true;
+    var _d = false;
+    var _e = undefined;
+
+    try {
+      for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
+        _arr.push(_s.value);
+
+        if (i && _arr.length === i) break;
+      }
+    } catch (err) {
+      _d = true;
+      _e = err;
+    } finally {
+      try {
+        if (!_n && _i["return"]) _i["return"]();
+      } finally {
+        if (_d) throw _e;
+      }
+    }
+
+    return _arr;
+  }
+
+  return function (arr, i) {
+    if (Array.isArray(arr)) {
+      return arr;
+    } else if (Symbol.iterator in Object(arr)) {
+      return sliceIterator(arr, i);
+    } else {
+      throw new TypeError("Invalid attempt to destructure non-iterable instance");
+    }
+  };
+}();
+
+const convert = x => {
+  if (isPlainObject(x)) {
+    return Object.entries(x).reduce((acc, value) => {
+      var _value = slicedToArray(value, 2);
+
+      const k = _value[0],
+            v = _value[1];
+
+      acc[k] = convert(v);
+      return acc;
+    }, {});
+  }
+
+  return { _text: x };
+};
+
+var getMessage = (x => {
+  if (!isPlainObject(x)) throw new Error('Requires a plain object');
+  return convert(x);
+});
+
+// Opts = {messageId, credentials, requestType, dataElementName, payload, options}
+var getMessageContainer = (opts => {
+  opts.options = opts.options || {};
+  return {
+    _declaration: {
+      _attributes: {
+        version: '1.0',
+        encoding: 'UTF-8'
+      }
+    },
+    SecurePayMessage: {
+      MessageInfo: {
+        messageID: {
+          _text: opts.messageId
+        },
+        messageTimestamp: {
+          _text: new Date().toISOString()
+        },
+        timeoutValue: {
+          _text: opts.options.timeout || '60'
+        },
+        apiVersion: {
+          _text: 'spxml-4.2'
+        }
+      },
+      MerchantInfo: {
+        merchantID: {
+          _text: opts.credentials.merchantId
+        },
+        password: {
+          _text: opts.credentials.password
+        }
+      },
+      RequestType: {
+        _text: opts.requestType
+      },
+      [opts.dataElementName]: {
+        [opts.dataElementName + 'List']: {
+          _attributes: {
+            count: '1'
+          },
+          [opts.dataElementName + 'Item']: Object.assign({ _attributes: { ID: '1' } }, getMessage(opts.payload))
+        }
+      }
+    }
+  };
+});
+
+const convert$1 = x => {
+  if (!isPlainObject(x)) return x;
+  if (x._text) return x._text;
+  return Object.entries(x).reduce((acc, value) => {
+    var _value = slicedToArray(value, 2);
+
+    const k = _value[0],
+          v = _value[1];
+
+    acc[k] = convert$1(v);
+    return acc;
+  }, {});
+};
+
+var getResponse = (x => {
+  if (!isPlainObject(x)) throw new Error('Requires a plain object');
+  return convert$1(x);
+});
+
+var Payor = new SchemaObject({
+  clientID: String,
+  currency: String,
+  amount: String,
+  CreditCardInfo: {
+    cardNumber: String,
+    expiryDate: String,
+    cardHolderName: String
+  }
+});
+
+var Token = new SchemaObject({
+  cardNumber: String,
+  expiryDate: String,
+  currency: String,
+  amount: String,
+  transactionReference: String
+});
+
+var Payment = new SchemaObject({
+  clientID: String,
+  currency: String,
+  amount: String,
+  transactionReference: String
+});
+
+const toXml = x => xmlJs.js2xml(x, { spaces: 4, compact: true });
+const fromXml = x => xmlJs.xml2js(x, { compact: true });
+
+const request = (() => {
+  var _ref = asyncToGenerator(function* (url, payload) {
+    const xml = toXml(payload);
+    const response = yield fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/xml' },
+      body: xml
+    }).then(function (x) {
+      return x.text();
+    });
+    return getResponse(fromXml(response));
+  });
+
+  return function request(_x, _x2) {
+    return _ref.apply(this, arguments);
+  };
+})();
+
+const clean = el => {
+  return response => {
     const result = response.SecurePayMessage;
     result.Data = result[el][el + 'List'][el + 'Item'];
     delete result[el];
@@ -28,8 +262,7 @@ const clean = (el) => {
   };
 };
 
-export default class SecurePay {
-
+class SecurePay {
   /**
    * @summary SecurePay API wrapper
    * @class
@@ -40,12 +273,10 @@ export default class SecurePay {
    * @param {Boolean} options.testMode Set to `true` to direct requests to the SecurePay test environment.
    * @param {String} options.timeout Timeout value used, in seconds.
    */
-  constructor(config, options={}) {
+  constructor(config, options = {}) {
     this.merchantId = config.merchantId;
     this.password = config.password;
-    this.baseUrl = options.testMode ?
-      'https://test.api.securepay.com.au/xmlapi/':
-      'https://api.securepay.com.au/xmlapi/';
+    this.baseUrl = options.testMode ? 'https://test.api.securepay.com.au/xmlapi/' : 'https://api.securepay.com.au/xmlapi/';
   }
 
   _getCredentials() {
@@ -81,11 +312,10 @@ export default class SecurePay {
       credentials: this._getCredentials(),
       requestType: 'Periodic',
       dataElementName: 'Periodic',
-      payload: {
+      payload: _extends({
         actionType: 'add',
-        periodicType: '4',
-        ...(new Payor(payorDetails)).toObject()
-      }
+        periodicType: '4'
+      }, new Payor(payorDetails).toObject())
     });
     return this._post('periodic', payload);
   }
@@ -138,10 +368,8 @@ export default class SecurePay {
       credentials: this._getCredentials(),
       requestType: 'addToken',
       dataElementName: 'Token',
-      payload: {
-        tokenType: 1, // The type of token created. Defaults to 1 if absent. Type 1 is 16 digits, not based on the card number, failing the LUHN check.
-        ...(new Token(tokenDetails)).toObject()
-      }
+      payload: _extends({
+        tokenType: 1 }, new Token(tokenDetails).toObject())
     });
     return this._post('token', payload);
   }
@@ -239,12 +467,12 @@ export default class SecurePay {
       credentials: this._getCredentials(),
       requestType: 'Periodic',
       dataElementName: 'Periodic',
-      payload: {
-        actionType: 'trigger',
-        ...(new Payment(paymentDetails)).toObject()
-      }
+      payload: _extends({
+        actionType: 'trigger'
+      }, new Payment(paymentDetails).toObject())
     });
     return this._post('periodic', payload);
   }
-
 }
+
+module.exports = SecurePay;

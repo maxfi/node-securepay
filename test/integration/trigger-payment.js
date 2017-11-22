@@ -1,5 +1,5 @@
 import test from 'ava';
-import SecurePay from '../../lib';
+import SecurePay from '../../src';
 
 test('SecurePay.triggerPayment - success', async t => {
   const sp = new SecurePay(
@@ -23,6 +23,8 @@ test('SecurePay.triggerPayment - success', async t => {
   result.MessageInfo.messageTimestamp = '20172211193559912000+660';
   t.regex(result.Data.txnID, /^\d+$/);
   result.Data.txnID = '815056';
+  t.regex(result.Data.settlementDate, /^\d{8}$/);
+  result.Data.settlementDate = '20171122';
 
   const expected = {
     MessageInfo: {
@@ -82,6 +84,8 @@ test('SecurePay.triggerPayment - failure', async t => {
   result.MessageInfo.messageTimestamp = '20172211193559912000+660';
   t.regex(result.Data.txnID, /^\d+$/);
   result.Data.txnID = '815056';
+  t.regex(result.Data.settlementDate, /^\d{8}$/);
+  result.Data.settlementDate = '20171122';
 
   const expected = {
     MessageInfo: {

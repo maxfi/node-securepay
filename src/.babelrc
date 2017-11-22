@@ -1,0 +1,22 @@
+{
+  "env": {
+    "production": {
+      "presets": [
+        [
+          "env",
+          {
+            "modules": false,
+            "targets": {
+              "node": "6"
+            }
+          }
+        ]
+      ],
+      "plugins": ["external-helpers"]
+    },
+    "development": {
+      "presets": ["env"]
+    }
+  },
+  "plugins": ["transform-object-rest-spread"]
+}
