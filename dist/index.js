@@ -36,9 +36,29 @@ var asyncToGenerator = function (fn) {
   };
 };
 
+var classCallCheck = function (instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+};
 
+var createClass = function () {
+  function defineProperties(target, props) {
+    for (var i = 0; i < props.length; i++) {
+      var descriptor = props[i];
+      descriptor.enumerable = descriptor.enumerable || false;
+      descriptor.configurable = true;
+      if ("value" in descriptor) descriptor.writable = true;
+      Object.defineProperty(target, descriptor.key, descriptor);
+    }
+  }
 
-
+  return function (Constructor, protoProps, staticProps) {
+    if (protoProps) defineProperties(Constructor.prototype, protoProps);
+    if (staticProps) defineProperties(Constructor, staticProps);
+    return Constructor;
+  };
+}();
 
 
 
@@ -118,13 +138,12 @@ var slicedToArray = function () {
   };
 }();
 
-const convert = x => {
+var convert = function convert(x) {
   if (isPlainObject(x)) {
-    return Object.entries(x).reduce((acc, value) => {
-      var _value = slicedToArray(value, 2);
-
-      const k = _value[0],
-            v = _value[1];
+    return Object.entries(x).reduce(function (acc, value) {
+      var _value = slicedToArray(value, 2),
+          k = _value[0],
+          v = _value[1];
 
       acc[k] = convert(v);
       return acc;
@@ -134,13 +153,13 @@ const convert = x => {
   return { _text: x };
 };
 
-var getMessage = (x => {
+var getMessage = (function (x) {
   if (!isPlainObject(x)) throw new Error('Requires a plain object');
   return convert(x);
 });
 
 // Opts = {messageId, credentials, requestType, dataElementName, payload, options}
-var getMessageContainer = (opts => {
+var getMessageContainer = (function (opts) {
   opts.options = opts.options || {};
   return {
     _declaration: {
@@ -187,21 +206,20 @@ var getMessageContainer = (opts => {
   };
 });
 
-const convert$1 = x => {
+var convert$1 = function convert(x) {
   if (!isPlainObject(x)) return x;
   if (x._text) return x._text;
-  return Object.entries(x).reduce((acc, value) => {
-    var _value = slicedToArray(value, 2);
+  return Object.entries(x).reduce(function (acc, value) {
+    var _value = slicedToArray(value, 2),
+        k = _value[0],
+        v = _value[1];
 
-    const k = _value[0],
-          v = _value[1];
-
-    acc[k] = convert$1(v);
+    acc[k] = convert(v);
     return acc;
   }, {});
 };
 
-var getResponse = (x => {
+var getResponse = (function (x) {
   if (!isPlainObject(x)) throw new Error('Requires a plain object');
   return convert$1(x);
 });
@@ -232,37 +250,59 @@ var Payment = new SchemaObject({
   transactionReference: String
 });
 
-const toXml = x => xmlJs.js2xml(x, { spaces: 4, compact: true });
-const fromXml = x => xmlJs.xml2js(x, { compact: true });
+var _this = undefined;
 
-const request = (() => {
-  var _ref = asyncToGenerator(function* (url, payload) {
-    const xml = toXml(payload);
-    const response = yield fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/xml' },
-      body: xml
-    }).then(function (x) {
-      return x.text();
-    });
-    return getResponse(fromXml(response));
-  });
+var toXml = function toXml(x) {
+  return xmlJs.js2xml(x, { spaces: 4, compact: true });
+};
+var fromXml = function fromXml(x) {
+  return xmlJs.xml2js(x, { compact: true });
+};
+
+var request = function () {
+  var _ref = asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(url, payload) {
+    var xml, response;
+    return regeneratorRuntime.wrap(function _callee$(_context) {
+      while (1) {
+        switch (_context.prev = _context.next) {
+          case 0:
+            xml = toXml(payload);
+            _context.next = 3;
+            return fetch(url, {
+              method: 'POST',
+              headers: { 'Content-Type': 'text/xml' },
+              body: xml
+            }).then(function (x) {
+              return x.text();
+            });
+
+          case 3:
+            response = _context.sent;
+            return _context.abrupt('return', getResponse(fromXml(response)));
+
+          case 5:
+          case 'end':
+            return _context.stop();
+        }
+      }
+    }, _callee, _this);
+  }));
 
   return function request(_x, _x2) {
     return _ref.apply(this, arguments);
   };
-})();
+}();
 
-const clean = el => {
-  return response => {
-    const result = response.SecurePayMessage;
+var clean = function clean(el) {
+  return function (response) {
+    var result = response.SecurePayMessage;
     result.Data = result[el][el + 'List'][el + 'Item'];
     delete result[el];
     return result;
   };
 };
 
-class SecurePay {
+var SecurePay = function () {
   /**
    * @summary SecurePay API wrapper
    * @class
@@ -273,206 +313,229 @@ class SecurePay {
    * @param {Boolean} options.testMode Set to `true` to direct requests to the SecurePay test environment.
    * @param {String} options.timeout Timeout value used, in seconds.
    */
-  constructor(config, options = {}) {
+  function SecurePay(config) {
+    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    classCallCheck(this, SecurePay);
+
     this.merchantId = config.merchantId;
     this.password = config.password;
     this.baseUrl = options.testMode ? 'https://test.api.securepay.com.au/xmlapi/' : 'https://api.securepay.com.au/xmlapi/';
   }
 
-  _getCredentials() {
-    return {
-      merchantId: this.merchantId,
-      password: this.password
-    };
-  }
+  createClass(SecurePay, [{
+    key: '_getCredentials',
+    value: function _getCredentials() {
+      return {
+        merchantId: this.merchantId,
+        password: this.password
+      };
+    }
+  }, {
+    key: '_post',
+    value: function _post(type, payload) {
+      var el = type.charAt(0).toUpperCase() + type.slice(1);
+      return request(this.baseUrl + type, payload).then(clean(el));
+    }
 
-  _post(type, payload) {
-    const el = type.charAt(0).toUpperCase() + type.slice(1);
-    return request(this.baseUrl + type, payload).then(clean(el));
-  }
+    /**
+     * @summary Add a new payor to the payor list
+     * @param {String} messageId Unique identifier for the XML message. Generated by the merchant.
+     * The `messageId` is a reference for the xml request. If you had a server internally you could store all your xml request and this would be a way to locate the request if a payment was to fail.
+     * A request will still be sent if they have the same `messageId` and will be treated as a new xml request.
+     * @param {Object} payorDetails
+     * @param {String} payorDetails.clientID Unique identifier. Eg, customer reference number.
+     * @param {String} payorDetails.currency Default currency to be stored with Token. The amount can be overridden be passing an amount when triggering a payment.
+     * @param {String} payorDetails.amount Default amount in cents to be stored with Token. The amount can be overridden be passing an amount when triggering a payment.
+     * @param {Object} payorDetails.CreditCardInfo
+     * @param {String} payorDetails.CreditCardInfo.cardNumber Credit card number.
+     * @param {String} payorDetails.CreditCardInfo.expiryDate MM/YY Credit card expiry date.
+     * @param {String} payorDetails.CreditCardInfo.cardHolderName Credit cardholder name.
+     * @returns {Promise}
+     */
 
-  /**
-   * @summary Add a new payor to the payor list
-   * @param {String} messageId Unique identifier for the XML message. Generated by the merchant.
-   * The `messageId` is a reference for the xml request. If you had a server internally you could store all your xml request and this would be a way to locate the request if a payment was to fail.
-   * A request will still be sent if they have the same `messageId` and will be treated as a new xml request.
-   * @param {Object} payorDetails
-   * @param {String} payorDetails.clientID Unique identifier. Eg, customer reference number.
-   * @param {String} payorDetails.currency Default currency to be stored with Token. The amount can be overridden be passing an amount when triggering a payment.
-   * @param {String} payorDetails.amount Default amount in cents to be stored with Token. The amount can be overridden be passing an amount when triggering a payment.
-   * @param {Object} payorDetails.CreditCardInfo
-   * @param {String} payorDetails.CreditCardInfo.cardNumber Credit card number.
-   * @param {String} payorDetails.CreditCardInfo.expiryDate MM/YY Credit card expiry date.
-   * @param {String} payorDetails.CreditCardInfo.cardHolderName Credit cardholder name.
-   * @returns {Promise}
-   */
-  addPayor(messageId, payorDetails) {
-    const payload = getMessageContainer({
-      messageId,
-      credentials: this._getCredentials(),
-      requestType: 'Periodic',
-      dataElementName: 'Periodic',
-      payload: _extends({
-        actionType: 'add',
-        periodicType: '4'
-      }, new Payor(payorDetails).toObject())
-    });
-    return this._post('periodic', payload);
-  }
+  }, {
+    key: 'addPayor',
+    value: function addPayor(messageId, payorDetails) {
+      var payload = getMessageContainer({
+        messageId,
+        credentials: this._getCredentials(),
+        requestType: 'Periodic',
+        dataElementName: 'Periodic',
+        payload: _extends({
+          actionType: 'add',
+          periodicType: '4'
+        }, new Payor(payorDetails).toObject())
+      });
+      return this._post('periodic', payload);
+    }
 
-  /**
-   * @summary Add a new token to the payor list
-   * @param {String} messageId The `messageId` is a reference for the xml request. If you had a server internally you could store all your xml request and this would be a way to locate the request if a payment was to fail. A request will still be sent if they have the same `messageId` and will be treated as a new xml request.
-   * @param {Object} tokenDetails
-   * @param {Object} tokenDetails.cardNumber Credit card number.
-   * @param {String} tokenDetails.expiryDate Credit card expiry date.
-   * @param {String} tokenDetails.currency Default currency to be stored with Token. The amount can be overridden be passing an amount when triggering a payment.
-   * @param {String} tokenDetails.amount Default amount in cents to be stored with Token. The amount can be overridden be passing an amount when triggering a payment.
-   * @param {String} tokenDetails.transactionReference The transaction identifier. This value will appear against all processed transactions. Typically an invoice number. E.g. "invoice12345". If absent the Token value will be used.
-   * @returns {Promise}
-   * const result = {
-      "MessageInfo": {
-        "messageID": "123456789",
-        "messageTimestamp": "2017-10-20T00:00:00.000Z",
-        "apiVersion": "xml-4.2"
-      },
-      "RequestType": "Payment",
-      "MerchantInfo": {
-        "merchantID": "ABC0001"
-      },
-      "Status": {
-        "statusCode": "0",
-        "statusDescription": "Normal"
-      },
-      "Data": {
-        "_attributes": {
-          "ID": "1"
+    /**
+     * @summary Add a new token to the payor list
+     * @param {String} messageId The `messageId` is a reference for the xml request. If you had a server internally you could store all your xml request and this would be a way to locate the request if a payment was to fail. A request will still be sent if they have the same `messageId` and will be treated as a new xml request.
+     * @param {Object} tokenDetails
+     * @param {Object} tokenDetails.cardNumber Credit card number.
+     * @param {String} tokenDetails.expiryDate Credit card expiry date.
+     * @param {String} tokenDetails.currency Default currency to be stored with Token. The amount can be overridden be passing an amount when triggering a payment.
+     * @param {String} tokenDetails.amount Default amount in cents to be stored with Token. The amount can be overridden be passing an amount when triggering a payment.
+     * @param {String} tokenDetails.transactionReference The transaction identifier. This value will appear against all processed transactions. Typically an invoice number. E.g. "invoice12345". If absent the Token value will be used.
+     * @returns {Promise}
+     * const result = {
+        "MessageInfo": {
+          "messageID": "123456789",
+          "messageTimestamp": "2017-10-20T00:00:00.000Z",
+          "apiVersion": "xml-4.2"
         },
-        "responseCode": "00",
-        "responseText": "Successful",
-        "successful": "yes",
-        "tokenValue": "8714448311797575",
-        "CreditCardInfo": {
-          "pan": "453934XXXXXXX716",
-          "expiryDate": "08/23",
-          "cardType": "6",
-          "cardDescription": "Visa"
+        "RequestType": "Payment",
+        "MerchantInfo": {
+          "merchantID": "ABC0001"
         },
-        "amount": "100",
-        "transactionReference": "test transaction - node-securepay"
-      }
-   */
-  addToken(messageId, tokenDetails) {
-    const payload = getMessageContainer({
-      messageId,
-      credentials: this._getCredentials(),
-      requestType: 'addToken',
-      dataElementName: 'Token',
-      payload: _extends({
-        tokenType: 1 }, new Token(tokenDetails).toObject())
-    });
-    return this._post('token', payload);
-  }
-
-  /**
-   * @param {String} messageId The `messageId` is a reference for the xml request. If you had a server internally you could store all your xml request and this would be a way to locate the request if a payment was to fail. A request will still be sent if they have the same `messageId` and will be treated as a new xml request.
-   * @param {String} tokenValue The token value that represents a stored card within SecurePay
-   * @returns {Promise}
-   * const result = {
-      MessageInfo: {
-        messageID: '123456789',
-        messageTimestamp: '2017-10-20T00:00:00.000Z',
-        apiVersion: 'xml-4.2'
-      },
-      RequestType: 'Payment',
-      MerchantInfo: { merchantID: 'ABC0001' },
-      Status: { statusCode: '0', statusDescription: 'Normal' },
-      Data: {
-        _attributes: { ID: '1' },
-        responseCode: '00',
-        responseText: 'Successful',
-        successful: 'yes',
-        tokenValue: '8714448311797575',
-        CreditCardInfo: {
-          pan: '453934XXXXXXX716',
-          expiryDate: '08/23',
-          cardType: '6',
-          cardDescription: 'Visa'
+        "Status": {
+          "statusCode": "0",
+          "statusDescription": "Normal"
         },
-        amount: '100',
-        transactionReference: 'test transaction - node-securepay'
-      }
-    };
-   */
-  lookupToken(messageId, tokenValue) {
-    const payload = getMessageContainer({
-      messageId,
-      credentials: this._getCredentials(),
-      requestType: 'lookupToken',
-      dataElementName: 'Token',
-      payload: { tokenValue }
-    });
-    return this._post('token', payload);
-  }
+        "Data": {
+          "_attributes": {
+            "ID": "1"
+          },
+          "responseCode": "00",
+          "responseText": "Successful",
+          "successful": "yes",
+          "tokenValue": "8714448311797575",
+          "CreditCardInfo": {
+            "pan": "453934XXXXXXX716",
+            "expiryDate": "08/23",
+            "cardType": "6",
+            "cardDescription": "Visa"
+          },
+          "amount": "100",
+          "transactionReference": "test transaction - node-securepay"
+        }
+     */
 
-  /**
-   * @param {String} messageId The `messageId` is a reference for the xml request. If you had a server internally you could store all your xml request and this would be a way to locate the request if a payment was to fail. A request will still be sent if they have the same `messageId` and will be treated as a new xml request.
-   * @param {String} tokenValue The token value that represents a stored card within SecurePay
-   * @returns {Promise}
-   * const result = {
-      MessageInfo: {
-        messageID: '123456789',
-        messageTimestamp: '20172211194828703000+660',
-        apiVersion: 'spxml-4.2'
-      },
-      RequestType: 'Periodic',
-      MerchantInfo: { merchantID: 'ABC0001' },
-      Status: { statusCode: '0', statusDescription: 'Normal' },
-      Data: {
-        _attributes: { ID: '1' },
-        actionType: 'delete',
-        clientID: '5115275733251415',
-        responseCode: '00',
-        responseText: 'Successful',
-        successful: 'yes'
-      }
-    };
-   */
-  deleteToken(messageId, tokenValue) {
-    const payload = getMessageContainer({
-      messageId,
-      credentials: this._getCredentials(),
-      requestType: 'Periodic',
-      dataElementName: 'Periodic',
-      payload: {
-        actionType: 'delete',
-        clientID: tokenValue
-      }
-    });
-    return this._post('periodic', payload);
-  }
+  }, {
+    key: 'addToken',
+    value: function addToken(messageId, tokenDetails) {
+      var payload = getMessageContainer({
+        messageId,
+        credentials: this._getCredentials(),
+        requestType: 'addToken',
+        dataElementName: 'Token',
+        payload: _extends({
+          tokenType: 1 }, new Token(tokenDetails).toObject())
+      });
+      return this._post('token', payload);
+    }
 
-  /**
-   * @param {String} messageId The `messageId` is a reference for the xml request. If you had a server internally you could store all your xml request and this would be a way to locate the request if a payment was to fail. A request will still be sent if they have the same `messageId` and will be treated as a new xml request.
-   * @param {Object} paymentDetails {timeout, testMode}
-   * @param {String} paymentDetails.clientID Unique identifier of payor or token.
-   * @param {String} paymentDetails.currency Default currency is "AUD" – Australian Dollars.
-   * @param {String} paymentDetails.amount Transaction amount in cents.
-   * @param {String} paymentDetails.tokenDetails.transactionReference The transaction identifier. This value will appear against all processed transactions. Typically an invoice number. E.g. "invoice12345". If absent the Token value will be used.
-   * @returns {Promise}
-   */
-  triggerPayment(messageId, paymentDetails) {
-    const payload = getMessageContainer({
-      messageId,
-      credentials: this._getCredentials(),
-      requestType: 'Periodic',
-      dataElementName: 'Periodic',
-      payload: _extends({
-        actionType: 'trigger'
-      }, new Payment(paymentDetails).toObject())
-    });
-    return this._post('periodic', payload);
-  }
-}
+    /**
+     * @param {String} messageId The `messageId` is a reference for the xml request. If you had a server internally you could store all your xml request and this would be a way to locate the request if a payment was to fail. A request will still be sent if they have the same `messageId` and will be treated as a new xml request.
+     * @param {String} tokenValue The token value that represents a stored card within SecurePay
+     * @returns {Promise}
+     * const result = {
+        MessageInfo: {
+          messageID: '123456789',
+          messageTimestamp: '2017-10-20T00:00:00.000Z',
+          apiVersion: 'xml-4.2'
+        },
+        RequestType: 'Payment',
+        MerchantInfo: { merchantID: 'ABC0001' },
+        Status: { statusCode: '0', statusDescription: 'Normal' },
+        Data: {
+          _attributes: { ID: '1' },
+          responseCode: '00',
+          responseText: 'Successful',
+          successful: 'yes',
+          tokenValue: '8714448311797575',
+          CreditCardInfo: {
+            pan: '453934XXXXXXX716',
+            expiryDate: '08/23',
+            cardType: '6',
+            cardDescription: 'Visa'
+          },
+          amount: '100',
+          transactionReference: 'test transaction - node-securepay'
+        }
+      };
+     */
+
+  }, {
+    key: 'lookupToken',
+    value: function lookupToken(messageId, tokenValue) {
+      var payload = getMessageContainer({
+        messageId,
+        credentials: this._getCredentials(),
+        requestType: 'lookupToken',
+        dataElementName: 'Token',
+        payload: { tokenValue }
+      });
+      return this._post('token', payload);
+    }
+
+    /**
+     * @param {String} messageId The `messageId` is a reference for the xml request. If you had a server internally you could store all your xml request and this would be a way to locate the request if a payment was to fail. A request will still be sent if they have the same `messageId` and will be treated as a new xml request.
+     * @param {String} tokenValue The token value that represents a stored card within SecurePay
+     * @returns {Promise}
+     * const result = {
+        MessageInfo: {
+          messageID: '123456789',
+          messageTimestamp: '20172211194828703000+660',
+          apiVersion: 'spxml-4.2'
+        },
+        RequestType: 'Periodic',
+        MerchantInfo: { merchantID: 'ABC0001' },
+        Status: { statusCode: '0', statusDescription: 'Normal' },
+        Data: {
+          _attributes: { ID: '1' },
+          actionType: 'delete',
+          clientID: '5115275733251415',
+          responseCode: '00',
+          responseText: 'Successful',
+          successful: 'yes'
+        }
+      };
+     */
+
+  }, {
+    key: 'deleteToken',
+    value: function deleteToken(messageId, tokenValue) {
+      var payload = getMessageContainer({
+        messageId,
+        credentials: this._getCredentials(),
+        requestType: 'Periodic',
+        dataElementName: 'Periodic',
+        payload: {
+          actionType: 'delete',
+          clientID: tokenValue
+        }
+      });
+      return this._post('periodic', payload);
+    }
+
+    /**
+     * @param {String} messageId The `messageId` is a reference for the xml request. If you had a server internally you could store all your xml request and this would be a way to locate the request if a payment was to fail. A request will still be sent if they have the same `messageId` and will be treated as a new xml request.
+     * @param {Object} paymentDetails {timeout, testMode}
+     * @param {String} paymentDetails.clientID Unique identifier of payor or token.
+     * @param {String} paymentDetails.currency Default currency is "AUD" – Australian Dollars.
+     * @param {String} paymentDetails.amount Transaction amount in cents.
+     * @param {String} paymentDetails.tokenDetails.transactionReference The transaction identifier. This value will appear against all processed transactions. Typically an invoice number. E.g. "invoice12345". If absent the Token value will be used.
+     * @returns {Promise}
+     */
+
+  }, {
+    key: 'triggerPayment',
+    value: function triggerPayment(messageId, paymentDetails) {
+      var payload = getMessageContainer({
+        messageId,
+        credentials: this._getCredentials(),
+        requestType: 'Periodic',
+        dataElementName: 'Periodic',
+        payload: _extends({
+          actionType: 'trigger'
+        }, new Payment(paymentDetails).toObject())
+      });
+      return this._post('periodic', payload);
+    }
+  }]);
+  return SecurePay;
+}();
 
 module.exports = SecurePay;
