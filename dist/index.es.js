@@ -1,16 +1,17 @@
-'use strict';
+import 'regenerator-runtime/runtime';
+import { js2xml, xml2js } from 'xml-js';
+import fetch from 'node-fetch';
+import 'core-js/modules/es7.object.entries';
+import isPlainObject from 'is-plain-object';
+import SchemaObject from 'schema-object';
 
-function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
-
-var xmlJs = require('xml-js');
-var fetch = _interopDefault(require('node-fetch'));
-var isPlainObject = _interopDefault(require('is-plain-object'));
-var SchemaObject = _interopDefault(require('schema-object'));
-
-var asyncToGenerator = function (fn) {
+function _asyncToGenerator(fn) {
   return function () {
-    var gen = fn.apply(this, arguments);
+    var self = this,
+        args = arguments;
     return new Promise(function (resolve, reject) {
+      var gen = fn.apply(self, args);
+
       function step(key, arg) {
         try {
           var info = gen[key](arg);
@@ -23,125 +24,103 @@ var asyncToGenerator = function (fn) {
         if (info.done) {
           resolve(value);
         } else {
-          return Promise.resolve(value).then(function (value) {
-            step("next", value);
-          }, function (err) {
-            step("throw", err);
-          });
+          Promise.resolve(value).then(_next, _throw);
         }
       }
 
-      return step("next");
+      function _next(value) {
+        step("next", value);
+      }
+
+      function _throw(err) {
+        step("throw", err);
+      }
+
+      _next();
     });
   };
-};
+}
 
-var classCallCheck = function (instance, Constructor) {
+function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
     throw new TypeError("Cannot call a class as a function");
   }
-};
+}
 
-var createClass = function () {
-  function defineProperties(target, props) {
-    for (var i = 0; i < props.length; i++) {
-      var descriptor = props[i];
-      descriptor.enumerable = descriptor.enumerable || false;
-      descriptor.configurable = true;
-      if ("value" in descriptor) descriptor.writable = true;
-      Object.defineProperty(target, descriptor.key, descriptor);
-    }
+function _defineProperties(target, props) {
+  for (var i = 0; i < props.length; i++) {
+    var descriptor = props[i];
+    descriptor.enumerable = descriptor.enumerable || false;
+    descriptor.configurable = true;
+    if ("value" in descriptor) descriptor.writable = true;
+    Object.defineProperty(target, descriptor.key, descriptor);
   }
+}
 
-  return function (Constructor, protoProps, staticProps) {
-    if (protoProps) defineProperties(Constructor.prototype, protoProps);
-    if (staticProps) defineProperties(Constructor, staticProps);
-    return Constructor;
-  };
-}();
+function _createClass(Constructor, protoProps, staticProps) {
+  if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+  if (staticProps) _defineProperties(Constructor, staticProps);
+  return Constructor;
+}
 
+function _extends() {
+  _extends = Object.assign || function (target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i];
 
-
-
-
-
-
-var _extends = Object.assign || function (target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i];
-
-    for (var key in source) {
-      if (Object.prototype.hasOwnProperty.call(source, key)) {
-        target[key] = source[key];
+      for (var key in source) {
+        if (Object.prototype.hasOwnProperty.call(source, key)) {
+          target[key] = source[key];
+        }
       }
     }
-  }
 
-  return target;
-};
+    return target;
+  };
 
+  return _extends.apply(this, arguments);
+}
 
+function _sliceIterator(arr, i) {
+  var _arr = [];
+  var _n = true;
+  var _d = false;
+  var _e = undefined;
 
+  try {
+    for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
+      _arr.push(_s.value);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-var slicedToArray = function () {
-  function sliceIterator(arr, i) {
-    var _arr = [];
-    var _n = true;
-    var _d = false;
-    var _e = undefined;
-
+      if (i && _arr.length === i) break;
+    }
+  } catch (err) {
+    _d = true;
+    _e = err;
+  } finally {
     try {
-      for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
-        _arr.push(_s.value);
-
-        if (i && _arr.length === i) break;
-      }
-    } catch (err) {
-      _d = true;
-      _e = err;
+      if (!_n && _i["return"] != null) _i["return"]();
     } finally {
-      try {
-        if (!_n && _i["return"]) _i["return"]();
-      } finally {
-        if (_d) throw _e;
-      }
+      if (_d) throw _e;
     }
-
-    return _arr;
   }
 
-  return function (arr, i) {
-    if (Array.isArray(arr)) {
-      return arr;
-    } else if (Symbol.iterator in Object(arr)) {
-      return sliceIterator(arr, i);
-    } else {
-      throw new TypeError("Invalid attempt to destructure non-iterable instance");
-    }
-  };
-}();
+  return _arr;
+}
+
+function _slicedToArray(arr, i) {
+  if (Array.isArray(arr)) {
+    return arr;
+  } else if (Symbol.iterator in Object(arr)) {
+    return _sliceIterator(arr, i);
+  } else {
+    throw new TypeError("Invalid attempt to destructure non-iterable instance");
+  }
+}
 
 var convert = function convert(x) {
   if (isPlainObject(x)) {
     return Object.entries(x).reduce(function (acc, value) {
-      var _value = slicedToArray(value, 2),
+      var _value = _slicedToArray(value, 2),
           k = _value[0],
           v = _value[1];
 
@@ -150,7 +129,9 @@ var convert = function convert(x) {
     }, {});
   }
 
-  return { _text: x };
+  return {
+    _text: x
+  };
 };
 
 var getMessage = (function (x) {
@@ -158,7 +139,6 @@ var getMessage = (function (x) {
   return convert(x);
 });
 
-// Opts = {messageId, credentials, requestType, dataElementName, payload, options}
 var getMessageContainer = (function (opts) {
   opts.options = opts.options || {};
   return {
@@ -199,7 +179,11 @@ var getMessageContainer = (function (opts) {
           _attributes: {
             count: '1'
           },
-          [opts.dataElementName + 'Item']: Object.assign({ _attributes: { ID: '1' } }, getMessage(opts.payload))
+          [opts.dataElementName + 'Item']: Object.assign({
+            _attributes: {
+              ID: '1'
+            }
+          }, getMessage(opts.payload))
         }
       }
     }
@@ -210,7 +194,7 @@ var convert$1 = function convert(x) {
   if (!isPlainObject(x)) return x;
   if (x._text) return x._text;
   return Object.entries(x).reduce(function (acc, value) {
-    var _value = slicedToArray(value, 2),
+    var _value = _slicedToArray(value, 2),
         k = _value[0],
         v = _value[1];
 
@@ -250,17 +234,23 @@ var Payment = new SchemaObject({
   transactionReference: String
 });
 
-var _this = undefined;
-
 var toXml = function toXml(x) {
-  return xmlJs.js2xml(x, { spaces: 4, compact: true });
+  return js2xml(x, {
+    spaces: 4,
+    compact: true
+  });
 };
+
 var fromXml = function fromXml(x) {
-  return xmlJs.xml2js(x, { compact: true });
+  return xml2js(x, {
+    compact: true
+  });
 };
 
 var request = function () {
-  var _ref = asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(url, payload) {
+  var _ref = _asyncToGenerator(
+  /*#__PURE__*/
+  regeneratorRuntime.mark(function _callee(url, payload) {
     var xml, response;
     return regeneratorRuntime.wrap(function _callee$(_context) {
       while (1) {
@@ -270,7 +260,9 @@ var request = function () {
             _context.next = 3;
             return fetch(url, {
               method: 'POST',
-              headers: { 'Content-Type': 'text/xml' },
+              headers: {
+                'Content-Type': 'text/xml'
+              },
               body: xml
             }).then(function (x) {
               return x.text();
@@ -278,14 +270,14 @@ var request = function () {
 
           case 3:
             response = _context.sent;
-            return _context.abrupt('return', getResponse(fromXml(response)));
+            return _context.abrupt("return", getResponse(fromXml(response)));
 
           case 5:
-          case 'end':
+          case "end":
             return _context.stop();
         }
       }
-    }, _callee, _this);
+    }, _callee, this);
   }));
 
   return function request(_x, _x2) {
@@ -302,7 +294,9 @@ var clean = function clean(el) {
   };
 };
 
-var SecurePay = function () {
+var SecurePay =
+/*#__PURE__*/
+function () {
   /**
    * @summary SecurePay API wrapper
    * @class
@@ -315,15 +309,14 @@ var SecurePay = function () {
    */
   function SecurePay(config) {
     var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-    classCallCheck(this, SecurePay);
-
+    _classCallCheck(this, SecurePay);
     this.merchantId = config.merchantId;
     this.password = config.password;
     this.baseUrl = options.testMode ? 'https://test.api.securepay.com.au/xmlapi/' : 'https://api.securepay.com.au/xmlapi/';
   }
 
-  createClass(SecurePay, [{
-    key: '_getCredentials',
+  _createClass(SecurePay, [{
+    key: "_getCredentials",
     value: function _getCredentials() {
       return {
         merchantId: this.merchantId,
@@ -331,12 +324,11 @@ var SecurePay = function () {
       };
     }
   }, {
-    key: '_post',
+    key: "_post",
     value: function _post(type, payload) {
       var el = type.charAt(0).toUpperCase() + type.slice(1);
       return request(this.baseUrl + type, payload).then(clean(el));
     }
-
     /**
      * @summary Add a new payor to the payor list
      * @param {String} messageId Unique identifier for the XML message. Generated by the merchant.
@@ -354,7 +346,7 @@ var SecurePay = function () {
      */
 
   }, {
-    key: 'addPayor',
+    key: "addPayor",
     value: function addPayor(messageId, payorDetails) {
       var payload = getMessageContainer({
         messageId,
@@ -368,7 +360,6 @@ var SecurePay = function () {
       });
       return this._post('periodic', payload);
     }
-
     /**
      * @summary Add a new token to the payor list
      * @param {String} messageId The `messageId` is a reference for the xml request. If you had a server internally you could store all your xml request and this would be a way to locate the request if a payment was to fail. A request will still be sent if they have the same `messageId` and will be treated as a new xml request.
@@ -413,7 +404,7 @@ var SecurePay = function () {
      */
 
   }, {
-    key: 'addToken',
+    key: "addToken",
     value: function addToken(messageId, tokenDetails) {
       var payload = getMessageContainer({
         messageId,
@@ -421,11 +412,11 @@ var SecurePay = function () {
         requestType: 'addToken',
         dataElementName: 'Token',
         payload: _extends({
-          tokenType: 1 }, new Token(tokenDetails).toObject())
+          tokenType: 1
+        }, new Token(tokenDetails).toObject())
       });
       return this._post('token', payload);
     }
-
     /**
      * @param {String} messageId The `messageId` is a reference for the xml request. If you had a server internally you could store all your xml request and this would be a way to locate the request if a payment was to fail. A request will still be sent if they have the same `messageId` and will be treated as a new xml request.
      * @param {String} tokenValue The token value that represents a stored card within SecurePay
@@ -458,18 +449,19 @@ var SecurePay = function () {
      */
 
   }, {
-    key: 'lookupToken',
+    key: "lookupToken",
     value: function lookupToken(messageId, tokenValue) {
       var payload = getMessageContainer({
         messageId,
         credentials: this._getCredentials(),
         requestType: 'lookupToken',
         dataElementName: 'Token',
-        payload: { tokenValue }
+        payload: {
+          tokenValue
+        }
       });
       return this._post('token', payload);
     }
-
     /**
      * @param {String} messageId The `messageId` is a reference for the xml request. If you had a server internally you could store all your xml request and this would be a way to locate the request if a payment was to fail. A request will still be sent if they have the same `messageId` and will be treated as a new xml request.
      * @param {String} tokenValue The token value that represents a stored card within SecurePay
@@ -495,7 +487,7 @@ var SecurePay = function () {
      */
 
   }, {
-    key: 'deleteToken',
+    key: "deleteToken",
     value: function deleteToken(messageId, tokenValue) {
       var payload = getMessageContainer({
         messageId,
@@ -509,7 +501,6 @@ var SecurePay = function () {
       });
       return this._post('periodic', payload);
     }
-
     /**
      * @param {String} messageId The `messageId` is a reference for the xml request. If you had a server internally you could store all your xml request and this would be a way to locate the request if a payment was to fail. A request will still be sent if they have the same `messageId` and will be treated as a new xml request.
      * @param {Object} paymentDetails {timeout, testMode}
@@ -521,7 +512,7 @@ var SecurePay = function () {
      */
 
   }, {
-    key: 'triggerPayment',
+    key: "triggerPayment",
     value: function triggerPayment(messageId, paymentDetails) {
       var payload = getMessageContainer({
         messageId,
@@ -538,4 +529,4 @@ var SecurePay = function () {
   return SecurePay;
 }();
 
-module.exports = SecurePay;
+export default SecurePay;
