@@ -48,7 +48,6 @@ npm test
 
 ## TODO
 
-* [ ] Validate schemas
 * [ ] Add JSDoc to README using
       [`jsdoc-to-markdown`](https://github.com/jsdoc2md/jsdoc-to-markdown)
 * [ ] Optimise transpile steps and npm scripts

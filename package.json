@@ -4,11 +4,11 @@
   "description": "SecurePay API wrapper for node.js",
   "author": "Max",
   "license": "UNLICENSED",
-  "main": "dist/index.js",
-  "module": "src/index.js",
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.es.js",
+  "jsnext:main": "dist/index.es.js",
   "files": [
-    "dist/",
-    "lib/"
+    "dist/"
   ],
   "engines": {
     "node": ">=4"
@@ -17,7 +17,7 @@
     "lint": "xo",
     "test": "npm run lint && BABEL_ENV=development ava",
     "build": "BABEL_ENV=production rollup -c",
-    "precommit": "lint-staged && npm run build && git add dist/index.js"
+    "precommit": "lint-staged && npm run build && git add dist/*"
   },
   "xo": {
     "extends": "prettier",
@@ -40,28 +40,30 @@
       "src/**/*.js"
     ],
     "require": [
-      "babel-register"
+      "@babel/register"
     ]
   },
   "dependencies": {
+    "@babel/runtime": "7.0.0-beta.32",
     "is-plain-object": "^2.0.4",
     "node-fetch": "^1.7.3",
-    "schema-object": "^4.0.11",
     "xml-js": "^1.5.2"
   },
   "devDependencies": {
+    "@babel/cli": "v7.0.0-beta.32",
+    "@babel/core": "^7.0.0-beta.32",
+    "@babel/plugin-proposal-object-rest-spread": "v7.0.0-beta.32",
+    "@babel/plugin-transform-runtime": "v7.0.0-beta.32",
+    "@babel/preset-env": "v7.0.0-beta.32",
+    "@babel/register": "v7.0.0-beta.32",
     "ava": "^0.23.0",
-    "babel-plugin-external-helpers": "^6.22.0",
-    "babel-plugin-transform-object-rest-spread": "^6.26.0",
-    "babel-preset-env": "^1.6.1",
-    "babel-register": "^6.26.0",
     "eslint-config-prettier": "^2.8.0",
     "husky": "^0.14.3",
     "lint-staged": "^5.0.0",
     "pify": "^3.0.0",
     "prettier": "1.8.2",
-    "rollup": "^0.51.8",
-    "rollup-plugin-babel": "^3.0.2",
+    "rollup": "^0.52.0",
+    "rollup-plugin-babel": "4.0.0-beta.0",
     "xo": "^0.18.2"
   }
 }

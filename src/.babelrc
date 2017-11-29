@@ -3,20 +3,29 @@
     "production": {
       "presets": [
         [
-          "env",
+          "@babel/preset-env",
           {
-            "modules": false,
             "targets": {
               "node": "4"
-            }
+            },
+            "modules": false,
+            "useBuiltIns": "usage",
+            "debug": true
           }
         ]
       ],
-      "plugins": ["external-helpers"]
+      "plugins": ["@babel/plugin-transform-runtime"]
     },
     "development": {
-      "presets": ["env"]
+      "presets": [
+        [
+          "@babel/preset-env",
+          {
+            "useBuiltIns": "usage"
+          }
+        ]
+      ]
     }
   },
-  "plugins": ["transform-object-rest-spread"]
+  "plugins": ["@babel/plugin-proposal-object-rest-spread"]
 }
