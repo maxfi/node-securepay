@@ -13,10 +13,18 @@
             "debug": true
           }
         ]
-      ]
+      ],
+      "plugins": ["@babel/plugin-transform-runtime"]
     },
     "development": {
-      "presets": ["@babel/preset-env"]
+      "presets": [
+        [
+          "@babel/preset-env",
+          {
+            "useBuiltIns": "usage"
+          }
+        ]
+      ]
     }
   },
   "plugins": ["@babel/plugin-proposal-object-rest-spread"]

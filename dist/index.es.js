@@ -1,125 +1,19 @@
+import _extends from '@babel/runtime/helpers/extends';
+import _classCallCheck from '@babel/runtime/helpers/classCallCheck';
+import _createClass from '@babel/runtime/helpers/createClass';
+import _regeneratorRuntime from '@babel/runtime/regenerator';
 import 'regenerator-runtime/runtime';
+import _asyncToGenerator from '@babel/runtime/helpers/asyncToGenerator';
 import { js2xml, xml2js } from 'xml-js';
 import fetch from 'node-fetch';
-import 'core-js/modules/es7.object.entries';
+import _Object$assign from '@babel/runtime/core-js/object/assign';
+import _slicedToArray from '@babel/runtime/helpers/slicedToArray';
+import _Object$entries from '@babel/runtime/core-js/object/entries';
 import isPlainObject from 'is-plain-object';
-import SchemaObject from 'schema-object';
-
-function _asyncToGenerator(fn) {
-  return function () {
-    var self = this,
-        args = arguments;
-    return new Promise(function (resolve, reject) {
-      var gen = fn.apply(self, args);
-
-      function step(key, arg) {
-        try {
-          var info = gen[key](arg);
-          var value = info.value;
-        } catch (error) {
-          reject(error);
-          return;
-        }
-
-        if (info.done) {
-          resolve(value);
-        } else {
-          Promise.resolve(value).then(_next, _throw);
-        }
-      }
-
-      function _next(value) {
-        step("next", value);
-      }
-
-      function _throw(err) {
-        step("throw", err);
-      }
-
-      _next();
-    });
-  };
-}
-
-function _classCallCheck(instance, Constructor) {
-  if (!(instance instanceof Constructor)) {
-    throw new TypeError("Cannot call a class as a function");
-  }
-}
-
-function _defineProperties(target, props) {
-  for (var i = 0; i < props.length; i++) {
-    var descriptor = props[i];
-    descriptor.enumerable = descriptor.enumerable || false;
-    descriptor.configurable = true;
-    if ("value" in descriptor) descriptor.writable = true;
-    Object.defineProperty(target, descriptor.key, descriptor);
-  }
-}
-
-function _createClass(Constructor, protoProps, staticProps) {
-  if (protoProps) _defineProperties(Constructor.prototype, protoProps);
-  if (staticProps) _defineProperties(Constructor, staticProps);
-  return Constructor;
-}
-
-function _extends() {
-  _extends = Object.assign || function (target) {
-    for (var i = 1; i < arguments.length; i++) {
-      var source = arguments[i];
-
-      for (var key in source) {
-        if (Object.prototype.hasOwnProperty.call(source, key)) {
-          target[key] = source[key];
-        }
-      }
-    }
-
-    return target;
-  };
-
-  return _extends.apply(this, arguments);
-}
-
-function _sliceIterator(arr, i) {
-  var _arr = [];
-  var _n = true;
-  var _d = false;
-  var _e = undefined;
-
-  try {
-    for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
-      _arr.push(_s.value);
-
-      if (i && _arr.length === i) break;
-    }
-  } catch (err) {
-    _d = true;
-    _e = err;
-  } finally {
-    try {
-      if (!_n && _i["return"] != null) _i["return"]();
-    } finally {
-      if (_d) throw _e;
-    }
-  }
-
-  return _arr;
-}
-
-function _slicedToArray(arr, i) {
-  if (Array.isArray(arr)) {
-    return arr;
-  } else if (Symbol.iterator in Object(arr)) {
-    return _sliceIterator(arr, i);
-  } else {
-    throw new TypeError("Invalid attempt to destructure non-iterable instance");
-  }
-}
 
 var convert = function convert(x) {
   if (isPlainObject(x)) {
-    return Object.entries(x).reduce(function (acc, value) {
+    return _Object$entries(x).reduce(function (acc, value) {
       var _value = _slicedToArray(value, 2),
           k = _value[0],
           v = _value[1];
@@ -179,7 +73,7 @@ var getMessageContainer = (function (opts) {
           _attributes: {
             count: '1'
           },
-          [opts.dataElementName + 'Item']: Object.assign({
+          [opts.dataElementName + 'Item']: _Object$assign({
             _attributes: {
               ID: '1'
             }
@@ -193,7 +87,7 @@ var getMessageContainer = (function (opts) {
 var convert$1 = function convert(x) {
   if (!isPlainObject(x)) return x;
   if (x._text) return x._text;
-  return Object.entries(x).reduce(function (acc, value) {
+  return _Object$entries(x).reduce(function (acc, value) {
     var _value = _slicedToArray(value, 2),
         k = _value[0],
         v = _value[1];
@@ -206,32 +100,6 @@ var convert$1 = function convert(x) {
 var getResponse = (function (x) {
   if (!isPlainObject(x)) throw new Error('Requires a plain object');
   return convert$1(x);
-});
-
-var Payor = new SchemaObject({
-  clientID: String,
-  currency: String,
-  amount: String,
-  CreditCardInfo: {
-    cardNumber: String,
-    expiryDate: String,
-    cardHolderName: String
-  }
-});
-
-var Token = new SchemaObject({
-  cardNumber: String,
-  expiryDate: String,
-  currency: String,
-  amount: String,
-  transactionReference: String
-});
-
-var Payment = new SchemaObject({
-  clientID: String,
-  currency: String,
-  amount: String,
-  transactionReference: String
 });
 
 var toXml = function toXml(x) {
@@ -250,9 +118,9 @@ var fromXml = function fromXml(x) {
 var request = function () {
   var _ref = _asyncToGenerator(
   /*#__PURE__*/
-  regeneratorRuntime.mark(function _callee(url, payload) {
+  _regeneratorRuntime.mark(function _callee(url, payload) {
     var xml, response;
-    return regeneratorRuntime.wrap(function _callee$(_context) {
+    return _regeneratorRuntime.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
@@ -309,7 +177,9 @@ function () {
    */
   function SecurePay(config) {
     var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
     _classCallCheck(this, SecurePay);
+
     this.merchantId = config.merchantId;
     this.password = config.password;
     this.baseUrl = options.testMode ? 'https://test.api.securepay.com.au/xmlapi/' : 'https://api.securepay.com.au/xmlapi/';
@@ -356,7 +226,7 @@ function () {
         payload: _extends({
           actionType: 'add',
           periodicType: '4'
-        }, new Payor(payorDetails).toObject())
+        }, payorDetails)
       });
       return this._post('periodic', payload);
     }
@@ -413,7 +283,7 @@ function () {
         dataElementName: 'Token',
         payload: _extends({
           tokenType: 1
-        }, new Token(tokenDetails).toObject())
+        }, tokenDetails)
       });
       return this._post('token', payload);
     }
@@ -521,11 +391,12 @@ function () {
         dataElementName: 'Periodic',
         payload: _extends({
           actionType: 'trigger'
-        }, new Payment(paymentDetails).toObject())
+        }, paymentDetails)
       });
       return this._post('periodic', payload);
     }
   }]);
+
   return SecurePay;
 }();
 

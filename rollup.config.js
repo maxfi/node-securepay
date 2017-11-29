@@ -4,7 +4,8 @@ export default {
   input: 'src/index.js',
   plugins: [
     babel({
-      exclude: 'node_modules/**'
+      exclude: 'node_modules/**',
+      runtimeHelpers: true
     })
   ],
   output: [

@@ -2,9 +2,6 @@ import { js2xml, xml2js } from 'xml-js';
 import fetch from 'node-fetch';
 import getMessageContainer from './util/get-message-container';
 import getResponse from './util/get-response';
-import Payor from './schemas/payor';
-import Token from './schemas/token';
-import Payment from './schemas/payment';
 
 const toXml = x => js2xml(x, { spaces: 4, compact: true });
 const fromXml = x => xml2js(x, { compact: true });
@@ -83,7 +80,7 @@ export default class SecurePay {
       payload: {
         actionType: 'add',
         periodicType: '4',
-        ...new Payor(payorDetails).toObject()
+        ...payorDetails
       }
     });
     return this._post('periodic', payload);
@@ -139,7 +136,7 @@ export default class SecurePay {
       dataElementName: 'Token',
       payload: {
         tokenType: 1, // The type of token created. Defaults to 1 if absent. Type 1 is 16 digits, not based on the card number, failing the LUHN check.
-        ...new Token(tokenDetails).toObject()
+        ...tokenDetails
       }
     });
     return this._post('token', payload);
@@ -240,7 +237,7 @@ export default class SecurePay {
       dataElementName: 'Periodic',
       payload: {
         actionType: 'trigger',
-        ...new Payment(paymentDetails).toObject()
+        ...paymentDetails
       }
     });
     return this._post('periodic', payload);
