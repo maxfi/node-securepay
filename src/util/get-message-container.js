@@ -1,4 +1,4 @@
-import getMessage from '../../src/util/get-message';
+import getMessage from './get-message';
 
 // Opts = {messageId, credentials, requestType, dataElementName, payload, options}
 export default opts => {
